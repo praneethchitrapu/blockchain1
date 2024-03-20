@@ -16,24 +16,24 @@ contract lottery{
   }
 
   function entry() public payable{
-    require(msg value == 1 ether,"entry denied");
+    require(msg.value == 1 ether,"entry denied");
     PLAYERS.push(payable(msg.sender));
   }
 
   function luck() public view returns(uint) {
-    return uint8(uint256(keccak256(abi.encodePacked(block.timestamp,block.difficulty,PLAYERS)))%251);
+    return uint8(uint256(keccak256(abi.encodePacked(block.timestamp,block.basefee,PLAYERS)))%251);
   }
 
 function pickWINNER() public onlyOWNER{
-  uint256 indexed = random()%PLAYERS.length;
-}
+  uint256 index = luck()%PLAYERS.length;
   
-  PLAYERS[indexed].transfer(address(this).balance);
-  WINNER = PLAYERS[indexed]
+address payable winner = payable(PLAYERS[index]);
+  winner.transfer(address(this).balance);
+  WINNER = winner;
 
   PLAYERS = new address payable[](0);
+}
+  
+ 
 
 }
-
-
-      
